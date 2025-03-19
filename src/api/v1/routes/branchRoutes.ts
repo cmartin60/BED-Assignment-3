@@ -1,5 +1,7 @@
 import express from "express";
 import { getAllBranches, getBranchById, createBranch, updateBranch, deleteBranch } from "../controllers/branchControllers";
+import { validateRequest } from "../middleware/validate";
+import { branchSchema } from "../validation/branchValidation";
 
 const router = express.Router();
 
@@ -55,7 +57,7 @@ router.get("/:id", getBranchById);
  *       201:
  *         description: Branch created successfully
  */
-router.post("/", createBranch);
+router.post("/", validateRequest(branchSchema), createBranch);
 
 /**
  * @openapi
@@ -83,7 +85,7 @@ router.post("/", createBranch);
  *       200:
  *         description: Branch updated successfully
  */
-router.put("/:id", updateBranch);
+router.put("/:id", validateRequest(branchSchema), updateBranch);
 
 /**
  * @openapi
@@ -100,6 +102,6 @@ router.put("/:id", updateBranch);
  *       200:
  *         description: Branch deleted successfully
  */
-router.delete("/:id", deleteBranch);
+router.delete("/:id", validateRequest(branchSchema), deleteBranch);
 
 export default router;

@@ -1,5 +1,8 @@
 import express from "express";
 import { getAllEmployees, getEmployeeById, createEmployee, updateEmployee, deleteEmployee } from "../controllers/employeeControllers";
+import { validateRequest } from "../middleware/validate";
+import { employeeSchema } from "../validation/employeeValidation";
+
 
 const router = express.Router();
 
@@ -61,7 +64,7 @@ router.get("/:id", getEmployeeById);
  *       201:
  *         description: Employee created successfully
  */
-router.post("/", createEmployee);
+router.post("/", validateRequest(employeeSchema), createEmployee);
 
 /**
  * @openapi
@@ -89,7 +92,7 @@ router.post("/", createEmployee);
  *       200:
  *         description: Employee updated successfully
  */
-router.put("/:id", updateEmployee);
+router.put("/:id", validateRequest(employeeSchema), updateEmployee);
 
 /**
  * @openapi
@@ -106,6 +109,6 @@ router.put("/:id", updateEmployee);
  *       200:
  *         description: Employee deleted successfully
  */
-router.delete("/:id", deleteEmployee);
+router.delete("/:id", validateRequest(employeeSchema), deleteEmployee);
 
 export default router;
