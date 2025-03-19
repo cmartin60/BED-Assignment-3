@@ -9,7 +9,7 @@ import {
 } from "../src/api/v1/controllers/employeeControllers";
 
 // Mock the Employee Controller
-jest.mock("../src/api/v1/controllers/employeeControllers", () => ({
+jest.mock("../src/api/v1/services/employeeServices", () => ({
     getAllEmployees: jest.fn((req, res) => res.status(200).send()),
     createEmployee: jest.fn((req, res) => res.status(201).send()),
     updateEmployee: jest.fn((req, res) => res.status(200).send()),
