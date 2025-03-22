@@ -8,8 +8,8 @@ import {
     getEmployeeById,
 } from "../src/api/v1/controllers/employeeControllers";
 
-// Mock the Employee Controller
-jest.mock("../src/api/v1/services/employeeServices", () => ({
+
+jest.mock("../src/api/v1/controllers/employeeControllers", () => ({
     getAllEmployees: jest.fn((req, res) => res.status(200).send()),
     createEmployee: jest.fn((req, res) => res.status(201).send()),
     updateEmployee: jest.fn((req, res) => res.status(200).send()),

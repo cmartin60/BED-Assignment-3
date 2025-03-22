@@ -7,7 +7,7 @@
 
 import { Request, Response, NextFunction } from "express";
 import * as employeeService from "../services/employeeServices";
-import type { Employee } from "../services/employeeServices";
+import type { Employee } from "../models/employeeModel";
 
 /**
  * @description Get all employees for a specific branch.
