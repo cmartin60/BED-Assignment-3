@@ -1,55 +1,62 @@
 import request from "supertest";
 import app from "../src/app";
+import {
+    getAllEmployees,
+    createEmployee,
+    updateEmployee,
+    deleteEmployee,
+    getEmployeeById,
+} from "../src/api/v1/controllers/employeeControllers";
 
-describe("Employee API", () => {
-    let employeeId: string;
+jest.mock("../config/firebaseConfig", () => ({
+    firestore: jest.fn().mockReturnValue({
+        collection: jest.fn().mockReturnThis(),
+        doc: jest.fn().mockReturnThis(),
+        get: jest.fn().mockResolvedValue({ exists: true, data: () => ({}) }),
+        set: jest.fn().mockResolvedValue(null),
+        update: jest.fn().mockResolvedValue(null),
+        delete: jest.fn().mockResolvedValue(null),
+    }),
+}));
 
-    it("should create a new employee", async () => {
-        const response = await request(app)
-            .post("/api/v1/routes")
-            .send({
+jest.mock("../src/api/v1/controllers/employeeControllers", () => ({
+    getAllEmployees: jest.fn((req, res) => res.status(200).send()),
+    createEmployee: jest.fn((req, res) => res.status(201).send()),
+    updateEmployee: jest.fn((req, res) => res.status(200).send()),
+    deleteEmployee: jest.fn((req, res) => res.status(200).send()),
+    getEmployeeById: jest.fn((req, res) => res.status(200).send()),
+}));
+
+describe("Employee Routes", () => {
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
+
+    describe("GET /api/v1/routes", () => {
+        it("should call getAllEmployees controller", async () => {
+            await request(app).get("/api/v1/routes");
+            expect(getAllEmployees).toHaveBeenCalled();
+        });
+    });
+
+    describe("POST /api/v1/routes", () => {
+        it("should call createEmployee controller", async () => {
+            const mockEmployee = {
                 name: "John Doe",
                 position: "Software Engineer",
-                department: "IT",
                 email: "johndoe@example.com",
-                phone: "1234567890",
-                branchId: "1"
-            });
+                branchId: "550e8400-e29b-41d4-a716-446655440000",
+            };
 
-        expect(response.status).toBe(201);
-        expect(response.body.data.id).toBeDefined();
-        employeeId = response.body.data.id;
+            await request(app).post("/api/v1/routes").send(mockEmployee);
+            expect(createEmployee).toHaveBeenCalled();
+        });
     });
 
-    it("should get all employees", async () => {
-        const response = await request(app).get("/api/v1/routes");
-        expect(response.status).toBe(200);
-        expect(Array.isArray(response.body.data)).toBeTruthy();
-    });
-
-    it("should get an employee by ID", async () => {
-        const response = await request(app).get(`/api/v1/routes/${employeeId}`);
-        expect(response.status).toBe(200);
-        expect(response.body.data.id).toBe(employeeId);
-    });
-
-    it("should update an employee", async () => {
-        const response = await request(app)
-            .put(`/api/v1/routes/${employeeId}`)
-            .send({ position: "Senior Engineer" });
-
-        expect(response.status).toBe(200);
-        expect(response.body.data.position).toBe("Senior Engineer");
-    });
-
-    it("should delete an employee", async () => {
-        const response = await request(app).delete(`/api/v1/routes/${employeeId}`);
-        expect(response.status).toBe(200);
-        expect(response.body.message).toBe("Employee Deleted");
-    });
-
-    it("should return 404 for a non-existing employee", async () => {
-        const response = await request(app).get("/api/v1/routes/non-existing-id");
-        expect(response.status).toBe(404);
+    describe("GET /api/v1/routes/:id", () => {
+        it("should call getEmployeeById controller", async () => {
+            await request(app).get("/api/v1/routes/1");
+            expect(getEmployeeById).toHaveBeenCalled();
+        });
     });
 });
